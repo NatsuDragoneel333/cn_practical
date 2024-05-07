@@ -1,0 +1,42 @@
+#include <iostream>
+#include <unordered_map>
+using namespace std;
+class SelectiveRepeatARQ {
+public:
+SelectiveRepeatARQ(int windowSize) : windowSize(windowSize), sendBase(0),
+nextSeqNum(0) {}
+void sendFrame(const std::string& frame) {
+if (nextSeqNum < sendBase + windowSize) {
+receiverWindow[nextSeqNum] = frame;
+++nextSeqNum;
+} else {
+cout << "Sender window is full. Frame not sent." <<endl;
+}
+}
+void receiveFrame(int frameSeqNum) {
+auto it = receiverWindow.find(frameSeqNum);
+if (it != receiverWindow.end()) {
+std::cout << "Frame " << frameSeqNum << " received." << std::endl;
+receiverWindow.erase(it);
+while (receiverWindow.find(sendBase) != receiverWindow.end()) {
+cout << "Acknowledging frame " << sendBase << "." <<endl;
+receiverWindow.erase(sendBase);
+++sendBase;
+}
+} else {
+cout << "Frame " << frameSeqNum << " not in sender window. Discarding." << endl;
+}}
+private:
+int windowSize;
+int sendBase;
+int nextSeqNum;
+unordered_map<int, string> receiverWindow;
+};
+int main() {
+int windowSize = 4;
+SelectiveRepeatARQ srArq(windowSize);
+for (int i = 0; i < 8; ++i) {
+srArq.sendFrame("Frame " + std::to_string(i));}
+srArq.receiveFrame(2);
+return 0;
+}

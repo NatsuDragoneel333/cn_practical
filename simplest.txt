@@ -1,0 +1,39 @@
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+#include <unistd.h>
+using namespace std;
+class Packet {
+public:
+int sequenceNumber;
+Packet(int seq) : sequenceNumber(seq) {}
+};
+class Sender {
+public:
+void send(Packet packet) {
+cout << "Sender: Sending packet with sequence number " << packet.sequenceNumber
+<< endl;
+sleep(1);
+}
+};
+class Receiver {
+public:
+void receive(Packet packet) {
+cout << "Receiver: Received packet with sequence number " <<
+packet.sequenceNumber <<endl;
+sleep(1);
+}
+};
+int main() {
+srand(time(NULL));
+Sender sender;
+Receiver receiver;
+int sequenceNumber = 0;
+int totalPackets = 5;
+while (sequenceNumber < totalPackets) {
+Packet packet(sequenceNumber);
+sender.send(packet);
+receiver.receive(packet);
+++sequenceNumber;
+}
+}
